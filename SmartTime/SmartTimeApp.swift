@@ -2,31 +2,47 @@
 //  SmartTimeApp.swift
 //  SmartTime
 //
-//  Created by Shini on 17/6/26.
-//
 
 import SwiftUI
 import SwiftData
 
 @main
 struct SmartTimeApp: App {
-    var sharedModelContainer: ModelContainer = {
-        let schema = Schema([
-            Item.self,
-        ])
-        let modelConfiguration = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+    let container: ModelContainer
 
+    init() {
+        let schema = Schema([
+            Category.self,
+            TaskItem.self,
+            CalendarEvent.self,
+            ReminderItem.self,
+            NoteItem.self
+        ])
+        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
         do {
-            return try ModelContainer(for: schema, configurations: [modelConfiguration])
+            container = try ModelContainer(for: schema, configurations: [config])
         } catch {
-            fatalError("Could not create ModelContainer: \(error)")
+            fatalError("Không tạo được ModelContainer: \(error)")
         }
-    }()
+        Self.seedDefaultCategoriesIfNeeded(container.mainContext)
+    }
 
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            MainTabView()
+                .task { _ = await NotificationService.shared.requestAuthorization() }
         }
-        .modelContainer(sharedModelContainer)
+        .modelContainer(container)
+    }
+
+    /// Nạp danh mục mặc định khi database trống.
+    @MainActor
+    static func seedDefaultCategoriesIfNeeded(_ context: ModelContext) {
+        let count = (try? context.fetchCount(FetchDescriptor<Category>())) ?? 0
+        guard count == 0 else { return }
+        for (name, hex, symbol) in Category.defaults {
+            context.insert(Category(name: name, colorHex: hex, symbol: symbol))
+        }
+        try? context.save()
     }
 }
