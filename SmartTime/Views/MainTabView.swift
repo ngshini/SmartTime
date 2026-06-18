@@ -17,6 +17,8 @@ struct MainTabView: View {
                 .tabItem { Label("Lịch", systemImage: "calendar") }
             NoteListView()
                 .tabItem { Label("Ghi chú", systemImage: "note.text") }
+            ImportView()
+                .tabItem { Label("Nhập", systemImage: "square.and.arrow.down") }
             FocusView()
                 .tabItem { Label("Tập trung", systemImage: "timer") }
             SettingsView()
