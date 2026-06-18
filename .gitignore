@@ -1,0 +1,12 @@
+# Xcode
+build/
+DerivedData/
+*.xcuserstate
+xcuserdata/
+
+# macOS
+.DS_Store
+
+# Ảnh chụp màn hình tạm từ shot.sh
+smarttime-shot.png
+*-shot.png
