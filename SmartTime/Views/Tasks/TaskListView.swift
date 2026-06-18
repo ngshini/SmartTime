@@ -35,9 +35,15 @@ struct TaskListView: View {
                             TaskRow(task: task) { toggleDone(task) }
                                 .contentShape(Rectangle())
                                 .onTapGesture { editingTask = task }
+                                .listRowSeparator(.hidden)
+                                .listRowInsets(.init(top: 5, leading: 16, bottom: 5, trailing: 16))
+                                .listRowBackground(Color.clear)
                         }
                         .onDelete(perform: delete)
                     }
+                    .listStyle(.plain)
+                    .scrollContentBackground(.hidden)
+                    .background(Color(.systemGroupedBackground))
                 }
             }
             .navigationTitle("Nhiệm vụ")
@@ -82,19 +88,27 @@ private struct TaskRow: View {
 
     var body: some View {
         HStack(alignment: .top, spacing: 12) {
+            RoundedRectangle(cornerRadius: 3)
+                .fill(task.priority.color)
+                .frame(width: 5)
+
             Button(action: onToggle) {
                 Image(systemName: task.isDone ? "checkmark.circle.fill" : "circle")
-                    .foregroundStyle(task.isDone ? .green : .secondary)
+                    .foregroundStyle(task.isDone ? .green : task.priority.color)
                     .font(.title3)
             }
             .buttonStyle(.plain)
 
-            VStack(alignment: .leading, spacing: 4) {
+            VStack(alignment: .leading, spacing: 6) {
                 Text(task.title)
                     .strikethrough(task.isDone)
                     .foregroundStyle(task.isDone ? .secondary : .primary)
                 HStack(spacing: 8) {
-                    Circle().fill(task.priority.color).frame(width: 8, height: 8)
+                    Text(task.priority.label)
+                        .font(.caption2.weight(.semibold))
+                        .padding(.horizontal, 7).padding(.vertical, 2)
+                        .background(task.priority.color.opacity(0.15), in: Capsule())
+                        .foregroundStyle(task.priority.color)
                     if let due = task.dueDate {
                         Label(due.formatted(date: .abbreviated, time: .shortened),
                               systemImage: "clock")
@@ -104,8 +118,11 @@ private struct TaskRow: View {
                     if let category = task.category { CategoryBadge(category: category) }
                 }
             }
+            Spacer(minLength: 0)
         }
-        .padding(.vertical, 2)
+        .padding(12)
+        .background(.background, in: RoundedRectangle(cornerRadius: AppTheme.cardCorner))
+        .shadow(color: .black.opacity(0.05), radius: 6, x: 0, y: 2)
     }
 }
 
