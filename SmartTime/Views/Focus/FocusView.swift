@@ -27,7 +27,8 @@ struct FocusView: View {
                     Circle().stroke(.quaternary, lineWidth: 14)
                     Circle()
                         .trim(from: 0, to: progress)
-                        .stroke(.blue, style: StrokeStyle(lineWidth: 14, lineCap: .round))
+                        .stroke(AppTheme.brandGradient,
+                                style: StrokeStyle(lineWidth: 14, lineCap: .round))
                         .rotationEffect(.degrees(-90))
                         .animation(.linear(duration: 0.3), value: progress)
                     Text(timeString)

@@ -24,6 +24,7 @@ struct MainTabView: View {
             SettingsView()
                 .tabItem { Label("Cài đặt", systemImage: "gearshape") }
         }
+        .tint(AppTheme.indigo)
     }
 }
 
